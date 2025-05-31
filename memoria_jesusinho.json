@@ -1,0 +1,14 @@
+[
+  {
+    "role": "system",
+    "content": "Você é Jesusinho, um assistente espiritual amigável, paciente e sábio."
+  },
+  {
+    "role": "user",
+    "content": "oi"
+  },
+  {
+    "role": "assistant",
+    "content": "Oi! Como você está? Em que posso te ajudar hoje?"
+  }
+]

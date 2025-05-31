@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#00ff7f" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jesusinho Virtual ✨</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-[#121212] text-[#00ff7f] min-h-screen flex justify-center items-start py-6">
+  <div id="app" class="w-full max-w-md bg-[#222] rounded-xl p-6 shadow-[0_0_15px_#00ff7f] flex flex-col items-center">
+    <h1 class="text-xl font-bold mb-2">Jesusinho Virtual ✨</h1>
+    <div id="gif-container" class="mb-4">
+      <img src="jesusinho.gif" alt="Jesusinho animado" class="w-40 h-40" />
+    </div>
+
+    <div id="chat-box" aria-live="polite" aria-label="Área de mensagens"></div>
+
+    <div class="w-full flex mt-4">
+      <input
+        type="text"
+        id="input-text"
+        placeholder="Digite sua mensagem aqui..."
+        autocomplete="off"
+        aria-label="Campo para digitar mensagem"
+        class="flex-grow p-2 text-sm bg-[#1e1e1e] text-[#00ff7f] rounded-md border-none mr-2"
+      />
+      <button id="send-btn" aria-label="Enviar mensagem" class="w-20 p-2 bg-[#00ff7f] text-[#121212] font-bold rounded-md hover:bg-[#00cc66]">
+        Enviar
+      </button>
+    </div>
+
+    <div id="buttons" class="flex gap-3 w-full mt-4">
+      <button id="versiculo-btn" class="flex-1 py-2 bg-[#00ff7f] text-[#121212] font-bold rounded-md hover:bg-[#00cc66]">📖 Versículo</button>
+      <button id="oracao-btn" class="flex-1 py-2 bg-[#00ff7f] text-[#121212] font-bold rounded-md hover:bg-[#00cc66]">🙏 Oração</button>
+      <button id="falar-btn" class="flex-1 py-2 bg-[#00ff7f] text-[#121212] font-bold rounded-md hover:bg-[#00cc66]">🎤 Falar</button>
+    </div>
+
+    <audio id="audio-player" controls style="margin-top: 15px; width: 100%; display: none;" aria-label="Player de áudio"></audio>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
