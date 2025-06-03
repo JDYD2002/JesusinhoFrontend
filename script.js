@@ -20,13 +20,17 @@ function appendMensagem(remetente, texto) {
 }
 
 function substituirUltimaMensagem(remetente, texto) {
-  const ultimo = chatBox.lastChild;
+  const ultimo = chatBox.lastElementChild; // melhor usar lastElementChild
   if (ultimo) {
     ultimo.classList.remove("voce", "jesusinho");
     if (remetente === "Você") ultimo.classList.add("voce");
     else ultimo.classList.add("jesusinho");
     ultimo.textContent = `${remetente}: ${texto}`;
+  } else {
+    // Se não existir mensagem, adiciona nova
+    appendMensagem(remetente, texto);
   }
+
 }
 
 async function enviarMensagem() {
