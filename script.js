@@ -1,4 +1,4 @@
-const baseURL = "https://jesus-mb25.onrender.com";
+const baseURL = "https://jesusinho-backend.onrender.com";
 const chatBox = document.getElementById("chat-box");
 const inputText = document.getElementById("input-text");
 const sendBtn = document.getElementById("send-btn");
