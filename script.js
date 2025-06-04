@@ -136,3 +136,5 @@ inputText.addEventListener("keydown", (e) => {
 versiculoBtn.addEventListener("click", pedirVersiculo);
 oracaoBtn.addEventListener("click", pedirOracao);
 falarBtn.addEventListener("click", falar);
+//wellcome
+appendMensagem("Jesusinho", "Olá! Eu sou Jesusinho, seu assistente espiritual. Como posso ajudar você hoje? 🙏");
