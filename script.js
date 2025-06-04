@@ -36,7 +36,7 @@ async function enviarMensagem() {
     }).then(r => r.json());
 
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    falarTexto(resposta.resposta);
+    // falarTexto(resposta.resposta); // desativado
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao se conectar com o servidor.");
     console.error("Erro ao enviar mensagem:", err);
@@ -53,7 +53,7 @@ async function pedirVersiculo() {
     }).then(r => r.json());
 
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    falarTexto(resposta.resposta);
+    // falarTexto(resposta.resposta); // desativado
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar versículo.");
     console.error("Erro ao pedir versículo:", err);
@@ -70,12 +70,13 @@ async function pedirOracao() {
     }).then(r => r.json());
 
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    falarTexto(resposta.resposta);
+    // falarTexto(resposta.resposta); // desativado
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar oração.");
     console.error("Erro ao pedir oração:", err);
   }
 }
+
 
 async function falarTexto(texto) {
   try {
@@ -85,14 +86,14 @@ async function falarTexto(texto) {
       body: JSON.stringify({ texto })
     });
 
-    const data = await res.json();
-    if (data.audio_b64) {
-      audioPlayer.src = "data:audio/mp3;base64," + data.audio_b64;
-      audioPlayer.style.display = "block";
-      audioPlayer.play();
-    } else {
-      audioPlayer.style.display = "none";
-    }
+  const data = await res.json();
+if (data.audio_b64) {
+  // audioPlayer.src = "data:audio/mp3;base64," + data.audio_b64;
+  // audioPlayer.style.display = "block";
+  // audioPlayer.play();
+} else {
+  // audioPlayer.style.display = "none";
+}
   } catch (err) {
     console.error("Erro ao converter texto em fala:", err);
   }
