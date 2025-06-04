@@ -13,25 +13,48 @@ let esperandoResposta = false;
 function appendMensagem(remetente, texto) {
   const div = document.createElement("div");
   div.classList.add("mensagem");
-  if (remetente === "Você") div.classList.add("voce");
-  else div.classList.add("jesusinho");
+  div.classList.add(remetente === "Você" ? "voce" : "jesusinho");
   div.textContent = `${remetente}: ${texto}`;
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 function substituirUltimaMensagem(remetente, texto) {
-  const ultimo = chatBox.lastElementChild; // melhor usar lastElementChild
+  const ultimo = chatBox.lastElementChild;
   if (ultimo) {
-    ultimo.classList.remove("voce", "jesusinho");
-    if (remetente === "Você") ultimo.classList.add("voce");
-    else ultimo.classList.add("jesusinho");
+    ultimo.className = "mensagem " + (remetente === "Você" ? "voce" : "jesusinho");
     ultimo.textContent = `${remetente}: ${texto}`;
   } else {
-    // Se não existir mensagem, adiciona nova
     appendMensagem(remetente, texto);
   }
+}
 
+function bloquearBotoes(bloquear) {
+  sendBtn.disabled = bloquear;
+  versiculoBtn.disabled = bloquear;
+  oracaoBtn.disabled = bloquear;
+  falarBtn.disabled = bloquear;
+  inputText.disabled = bloquear;
+}
+
+async function fetchChat(mensagemTexto) {
+  const res = await fetch(`${baseURL}/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ texto: mensagemTexto }),
+  });
+  if (!res.ok) throw new Error(`Erro HTTP: ${res.status}`);
+  return res.json();
+}
+
+async function fetchTTS(texto) {
+  const res = await fetch(`${baseURL}/tts`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ texto }),
+  });
+  if (!res.ok) throw new Error(`Erro HTTP TTS: ${res.status}`);
+  return res.json();
 }
 
 async function enviarMensagem() {
@@ -41,88 +64,75 @@ async function enviarMensagem() {
 
   appendMensagem("Você", texto);
   inputText.value = "";
-  appendMensagem("Jesusinho", "digitando...");
+  substituirUltimaMensagem("Jesusinho", "digitando...");
   esperandoResposta = true;
+  bloquearBotoes(true);
 
   try {
-    const resposta = await fetch(`${baseURL}/chat`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ texto })
-    }).then(r => r.json());
-
+    const resposta = await fetchChat(texto);
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    falarTexto(resposta.resposta);
+    await falarTexto(resposta.resposta);
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao se conectar com o servidor.");
     console.error("Erro ao enviar mensagem:", err);
   } finally {
     esperandoResposta = false;
+    bloquearBotoes(false);
   }
 }
 
 async function pedirVersiculo() {
   if (esperandoResposta) return;
-  appendMensagem("Jesusinho", "digitando...");
+  substituirUltimaMensagem("Jesusinho", "digitando...");
   esperandoResposta = true;
+  bloquearBotoes(true);
 
   try {
-    const resposta = await fetch(`${baseURL}/chat`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ texto: "Me dê um versículo bíblico inspirador para hoje." })
-    }).then(r => r.json());
-
+    // Aqui manda para /chat com prompt fixo, pode ajustar se criar endpoint dedicado
+    const resposta = await fetchChat("Me dê um versículo bíblico inspirador para hoje.");
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    falarTexto(resposta.resposta);
+    await falarTexto(resposta.resposta);
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar versículo.");
     console.error("Erro ao pedir versículo:", err);
   } finally {
     esperandoResposta = false;
+    bloquearBotoes(false);
   }
 }
 
 async function pedirOracao() {
   if (esperandoResposta) return;
-  appendMensagem("Jesusinho", "digitando...");
+  substituirUltimaMensagem("Jesusinho", "digitando...");
   esperandoResposta = true;
+  bloquearBotoes(true);
 
   try {
-    const resposta = await fetch(`${baseURL}/chat`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ texto: "Escreva uma oração curta e edificante para o dia de hoje." })
-    }).then(r => r.json());
-
+    const resposta = await fetchChat("Escreva uma oração curta e edificante para o dia de hoje.");
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    falarTexto(resposta.resposta);
+    await falarTexto(resposta.resposta);
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar oração.");
     console.error("Erro ao pedir oração:", err);
   } finally {
     esperandoResposta = false;
+    bloquearBotoes(false);
   }
 }
 
 async function falarTexto(texto) {
   try {
-    const res = await fetch(`${baseURL}/tts`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ texto })
-    });
-
-    const data = await res.json();
+    const data = await fetchTTS(texto);
     if (data.audio_b64) {
       audioPlayer.src = "data:audio/mp3;base64," + data.audio_b64;
       audioPlayer.style.display = "block";
-      audioPlayer.play();
+      await audioPlayer.play();
     } else {
       audioPlayer.style.display = "none";
     }
   } catch (err) {
     console.error("Erro ao converter texto em fala:", err);
+    audioPlayer.style.display = "none";
   }
 }
 
