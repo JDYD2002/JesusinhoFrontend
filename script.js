@@ -5,8 +5,7 @@ const inputText = document.getElementById("input-text");
 const sendBtn = document.getElementById("send-btn");
 const versiculoBtn = document.getElementById("versiculo-btn");
 const oracaoBtn = document.getElementById("oracao-btn");
-const falarBtn = document.getElementById("falar-btn");
-const audioPlayer = document.getElementById("audio-player");
+// Removi falarBtn e audioPlayer
 
 let esperandoResposta = false;
 
@@ -33,7 +32,6 @@ function bloquearBotoes(bloquear) {
   sendBtn.disabled = bloquear;
   versiculoBtn.disabled = bloquear;
   oracaoBtn.disabled = bloquear;
-  falarBtn.disabled = bloquear;
   inputText.disabled = bloquear;
 }
 
@@ -47,22 +45,12 @@ async function fetchChat(mensagemTexto) {
   return res.json();
 }
 
-async function fetchTTS(texto) {
-  const res = await fetch(`${baseURL}/tts`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ texto }),
-  });
-  if (!res.ok) throw new Error(`Erro HTTP TTS: ${res.status}`);
-  return res.json();
-}
-
 async function enviarMensagem() {
   if (esperandoResposta) return;
   const texto = inputText.value.trim();
   if (!texto) return;
 
-  appendMensagem("Você", texto);
+  appendMensagem("Você", texto);  // Garante que sua mensagem apareça
   inputText.value = "";
   substituirUltimaMensagem("Jesusinho", "digitando...");
   esperandoResposta = true;
@@ -71,7 +59,7 @@ async function enviarMensagem() {
   try {
     const resposta = await fetchChat(texto);
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    await falarTexto(resposta.resposta);
+    // Removido falarTexto aqui
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao se conectar com o servidor.");
     console.error("Erro ao enviar mensagem:", err);
@@ -88,10 +76,8 @@ async function pedirVersiculo() {
   bloquearBotoes(true);
 
   try {
-    // Aqui manda para /chat com prompt fixo, pode ajustar se criar endpoint dedicado
     const resposta = await fetchChat("Me dê um versículo bíblico inspirador para hoje.");
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    await falarTexto(resposta.resposta);
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar versículo.");
     console.error("Erro ao pedir versículo:", err);
@@ -110,7 +96,6 @@ async function pedirOracao() {
   try {
     const resposta = await fetchChat("Escreva uma oração curta e edificante para o dia de hoje.");
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    await falarTexto(resposta.resposta);
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar oração.");
     console.error("Erro ao pedir oração:", err);
@@ -120,66 +105,7 @@ async function pedirOracao() {
   }
 }
 
-async function falarTexto(texto) {
-  try {
-    const data = await fetchTTS(texto);
-    if (data.audio_b64) {
-      audioPlayer.src = "data:audio/mp3;base64," + data.audio_b64;
-      audioPlayer.style.display = "block";
-      await audioPlayer.play();
-    } else {
-      audioPlayer.style.display = "none";
-    }
-  } catch (err) {
-    console.error("Erro ao converter texto em fala:", err);
-    audioPlayer.style.display = "none";
-  }
-}
-
-// Reconhecimento de voz ajustado com feedback no botão
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-let recognition;
-
-function falar() {
-  if (!SpeechRecognition) {
-    alert("Reconhecimento de voz não suportado no seu navegador.");
-    return;
-  }
-
-  if (!recognition) {
-    recognition = new SpeechRecognition();
-    recognition.lang = "pt-BR";
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    recognition.onstart = () => {
-      falarBtn.disabled = true;
-      falarBtn.textContent = "Gravando...";
-      falarBtn.classList.add("bg-[#00994d]");
-    };
-
-    recognition.onend = () => {
-      falarBtn.disabled = false;
-      falarBtn.textContent = "🎤 Falar";
-      falarBtn.classList.remove("bg-[#00994d]");
-    };
-
-    recognition.onresult = (event) => {
-      const texto = event.results[0][0].transcript;
-      inputText.value = texto;
-      enviarMensagem();
-    };
-
-    recognition.onerror = (event) => {
-      console.error("Erro no reconhecimento de voz:", event.error);
-      falarBtn.disabled = false;
-      falarBtn.textContent = "🎤 Falar";
-      falarBtn.classList.remove("bg-[#00994d]");
-    };
-  }
-
-  recognition.start();
-}
+// Removido falarTexto e reconhecimento de voz para simplificar
 
 sendBtn.addEventListener("click", enviarMensagem);
 inputText.addEventListener("keydown", (e) => {
@@ -187,7 +113,6 @@ inputText.addEventListener("keydown", (e) => {
 });
 versiculoBtn.addEventListener("click", pedirVersiculo);
 oracaoBtn.addEventListener("click", pedirOracao);
-falarBtn.addEventListener("click", falar);
 
 // Mensagem de boas-vindas ao carregar a página
 window.addEventListener("load", () => {
