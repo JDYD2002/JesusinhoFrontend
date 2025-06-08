@@ -29,11 +29,11 @@ async function enviarMensagem() {
   appendMensagem("Jesusinho", "digitando...");
 
   try {
-    const resposta = await fetch(`${baseURL}/chat`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ texto })
-    }).then(r => r.json());
+const resposta = await fetch(`${baseURL}/responder`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ texto })
+}).then(r => r.json());
 
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
     // falarTexto(resposta.resposta); // desativado
