@@ -29,11 +29,11 @@ async function enviarMensagem() {
   appendMensagem("Jesusinho", "digitando...");
 
   try {
-const resposta = await fetch(`${baseURL}/responder`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ texto })
-}).then(r => r.json());
+    const resposta = await fetch(`${baseURL}/responder`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ texto })
+    }).then(r => r.json());
 
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
     // falarTexto(resposta.resposta); // desativado
@@ -46,7 +46,7 @@ const resposta = await fetch(`${baseURL}/responder`, {
 async function pedirVersiculo() {
   appendMensagem("Jesusinho", "digitando...");
   try {
-    const resposta = await fetch(`${baseURL}/chat`, {
+    const resposta = await fetch(`${baseURL}/responder`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto: "Me dê um versículo bíblico inspirador para hoje." })
@@ -63,7 +63,7 @@ async function pedirVersiculo() {
 async function pedirOracao() {
   appendMensagem("Jesusinho", "digitando...");
   try {
-    const resposta = await fetch(`${baseURL}/chat`, {
+    const resposta = await fetch(`${baseURL}/responder`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto: "Escreva uma oração curta e edificante para o dia de hoje." })
@@ -77,7 +77,6 @@ async function pedirOracao() {
   }
 }
 
-
 async function falarTexto(texto) {
   try {
     const res = await fetch(`${baseURL}/tts`, {
@@ -86,14 +85,14 @@ async function falarTexto(texto) {
       body: JSON.stringify({ texto })
     });
 
-  const data = await res.json();
-if (data.audio_b64) {
-  // audioPlayer.src = "data:audio/mp3;base64," + data.audio_b64;
-  // audioPlayer.style.display = "block";
-  // audioPlayer.play();
-} else {
-  // audioPlayer.style.display = "none";
-}
+    const data = await res.json();
+    if (data.audio_b64) {
+      // audioPlayer.src = "data:audio/mp3;base64," + data.audio_b64;
+      // audioPlayer.style.display = "block";
+      // audioPlayer.play();
+    } else {
+      // audioPlayer.style.display = "none";
+    }
   } catch (err) {
     console.error("Erro ao converter texto em fala:", err);
   }
@@ -136,5 +135,6 @@ inputText.addEventListener("keydown", (e) => {
 versiculoBtn.addEventListener("click", pedirVersiculo);
 oracaoBtn.addEventListener("click", pedirOracao);
 falarBtn.addEventListener("click", falar);
-//wellcome
+
+// Mensagem inicial de boas-vindas
 appendMensagem("Jesusinho", "Olá! Eu sou Jesusinho, seu assistente espiritual. Como posso ajudar você hoje? 🙏");
