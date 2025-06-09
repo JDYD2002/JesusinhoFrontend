@@ -1,166 +1,46 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#00ff7f" />
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Jovens Discípulos - Grupo de jovens da AD Canaã II. Compartilhando o amor de Cristo através de eventos e comunhão." />
-  <meta name="keywords" content="jovens, igreja, discípulos, AD Canaã II, eventos cristãos, célula, evangelismo" />
-  <meta name="author" content="Jovens Discípulos" />
-  <title>Jovens Discípulos - AD Canaã II</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jesusinho Virtual ✨</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="style.css" />
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
-
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-6WKPL85H4L"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-6WKPL85H4L');
-  </script>
 </head>
-<body>
-  <header>
-
-    
-    <h1 id="animated-title"></h1>
-
-    <nav>
-      <a href="#sobre">Sobre</a>
-      <a href="#eventos">Eventos</a>
-      <a href="#galeria">Galeria</a>
-      <a href="#louvores">Louvores</a>
-      <a href="#contato">Contato</a>
-    </nav>
-  </header>
-
-  <section id="sobre" data-aos="fade-up">
-    <h2>Sobre Nós</h2>
-    <p>Somos o grupo de jovens da AD Canaã II. Nosso propósito é viver e compartilhar o amor de Cristo através da comunhão, serviço e crescimento espiritual.</p>
-  </section>
-
-<section id="eventos" data-aos="zoom-in">
-  <h2>Próximos Eventos</h2>
-  <ul>
-    <li>
-      <strong>Célula Hefzibá:</strong> Toda terça às 19:30
-      <br />
-      <button id="btnToggleVersiculo" aria-expanded="false" aria-controls="conteudoVersiculo">Versículo base</button>
-    </li>
-  </ul>
-
-  <div id="conteudoVersiculo" hidden style="margin-top: 20px; max-width: 600px; font-style: italic;">
-    <p>
-      Não mais a chamarão abandonada,<br>
-      nem desamparada à sua terra.<br>
-      Você, porém, será chamada <strong>Hefzibá</strong>,<br>
-      e a sua terra, Beulá,<br>
-      pois o Senhor terá prazer em você,<br>
-      e a sua terra estará casada.
-    </p>
-    <p style="width: 300px;text-align:right; font-weight:bold; color:#6a6a6a;">Isaías 62:4</p>
-  </div>
-</section>
-
-
-
-  <section id="louvores" data-aos="fade-up">
-  <h2>Playlist da célula</h2>
-  <div class="video-carousel">
-    <button class="video-btn prev">&#10094;</button>
-
- <div class="video-slide active">
-  <iframe src="https://www.youtube.com/embed/rQI3AUcDg6s" title="Isaías 62 - Rafael Teixeira"
-    frameborder="0" allowfullscreen></iframe>
-</div>
-<div class="video-slide">
-  <iframe src="https://www.youtube.com/embed/G7-SeRxFITA" title="Isaías 62 - Novo Vídeo"
-    frameborder="0" allowfullscreen></iframe>
-</div>
-
-
-
-    <button class="video-btn next">&#10095;</button>
-  </div>
-</section>
-
-
-<!-- Galeria com modal -->
-<section id="galeria" data-aos="fade-up">
-  <h2>Galeria</h2>
-  <div class="carousel">
-    <button class="carousel-btn prev" aria-label="Imagem anterior">&#10094;</button>
-    <button class="carousel-btn next" aria-label="Próxima imagem">&#10095;</button>
-    <img src="assets/WhatsApp Image 2025-05-20 at 22.20.25.jpeg" class="active" alt="Célula" tabindex="0" />
-    <img src="assets/JD.png" alt="Logo" tabindex="0" />
-    <img src="assets/JD.png" alt="Grupo reunido na igreja" tabindex="0" />
-  </div>
-
-  <!-- Modal -->
-  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
-    <button class="close" aria-label="Fechar modal">&times;</button>
-    <img class="modal-content" id="modal-img" alt="" />
-  </div>
-</section>
-
-
-  <section id="contato" data-aos="fade-up">
-    <h2>Contato</h2>
-    <form action="https://formsubmit.co/ydjd2002@gmail.com" method="POST">
-      <input type="hidden" name="_subject" value="Nova mensagem do site - Jovens Discípulos">
-      <input type="email" name="email" placeholder="Seu e-mail" required>
-      <input type="text" name="nome" placeholder="Seu nome" required>
-      <textarea name="mensagem" placeholder="Sua mensagem" rows="5" required></textarea>
-      <button type="submit">Enviar</button>
-    </form>
-
-    <div class="instagram-link">
-      <a href="https://www.instagram.com/jovenssdiscipulos" rel="noopener noreferrer">
-        <img src="https://img.icons8.com/ios-filled/30/ffffff/instagram-new.png" alt="Instagram">
-        Siga-nos no Instagram
-      </a>
+<body class="bg-[#121212] text-[#00ff7f] min-h-screen flex justify-center items-start py-6">
+  <div id="app" class="w-full max-w-md bg-[#222] rounded-xl p-6 shadow-[0_0_15px_#00ff7f] flex flex-col items-center">
+    <h1 class="text-xl font-bold mb-2">Jesusinho Virtual ✨</h1>
+    <div id="gif-container" class="mb-4">
+      <img src="jesusinho.gif" alt="Jesusinho animado" class="w-40 h-40" />
     </div>
 
-    <div class="whatsapp-link">
-      <a href="https://chat.whatsapp.com/INsIy5e1vIwLFQLTSx79GB" rel="noopener noreferrer">
-        <img src="https://img.icons8.com/ios-filled/30/FFFFFF/whatsapp--v1.png" alt="WhatsApp">
-        Entrar no grupo da Célula
-      </a>
-    </div>
-  </section>
+    <div id="chat-box" aria-live="polite" aria-label="Área de mensagens"></div>
 
-  <footer>
-    <p>&copy; 2025 Jovens Discípulos - AD Canaã II</p>
-  </footer>
+    <div class="w-full flex mt-4">
+      <input
+        type="text"
+        id="input-text"
+        placeholder="Digite sua mensagem aqui..."
+        autocomplete="off"
+        aria-label="Campo para digitar mensagem"
+        class="flex-grow p-2 text-sm bg-[#1e1e1e] text-[#00ff7f] rounded-md border-none mr-2"
+      />
+      <button id="send-btn" aria-label="Enviar mensagem" class="w-20 p-2 bg-[#00ff7f] text-[#121212] font-bold rounded-md hover:bg-[#00cc66]">
+        Enviar
+      </button>
+    </div>
+
+    <div id="buttons" class="flex gap-3 w-full mt-4">
+      <button id="versiculo-btn" class="flex-1 py-2 bg-[#00ff7f] text-[#121212] font-bold rounded-md hover:bg-[#00cc66]">📖 Versículo</button>
+      <button id="oracao-btn" class="flex-1 py-2 bg-[#00ff7f] text-[#121212] font-bold rounded-md hover:bg-[#00cc66]">🙏 Oração</button>
+      <button id="falar-btn" class="flex-1 py-2 bg-[#00ff7f] text-[#121212] font-bold rounded-md hover:bg-[#00cc66]">🎤 Falar</button>
+    </div>
+
+    <audio id="audio-player" controls style="margin-top: 15px; width: 100%; display: none;" aria-label="Player de áudio"></audio>
+  </div>
 
   <script src="script.js"></script>
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script>AOS.init();</script>
-
-  <script>
-  const fullText = "Jovens Discípulos";
-  const titleElement = document.getElementById("animated-title");
-  let index = 0;
-
-  function typeWriter() {
-    if (index < fullText.length) {
-      titleElement.textContent += fullText.charAt(index);
-      index++;
-      setTimeout(typeWriter, 150);
-    }
-  }
-typeWriter();
-</script>
-<!-- Botão flutuante Jesusinho -->
-<button id="btn-jesusinho" class="btn-jesusinho" title="Abrir Jesusinho Virtual"><img src="assets/vs2.png" alt="Logo" tabindex="0" /></button>
-
-<!-- Modal Jesusinho -->
-<div id="modal-jesusinho" class="modal-jesusinho">
-  <div class="modal-content-jesusinho">
-       <button id="close-modal" class="close-btn" aria-label="Fechar">&times;</button>
-    <iframe src="https://jesusinho.netlify.app/" frameborder="0" class="iframe-jesusinho"></iframe>
-  </div>
-</div>
-
 </body>
 </html>
