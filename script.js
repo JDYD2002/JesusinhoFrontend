@@ -10,14 +10,14 @@ const audioPlayer = document.getElementById("audio-player");
 function appendMensagem(remetente, texto) {
   const div = document.createElement("div");
   div.classList.add("mensagem");
-  div.textContent = `${remetente}: ${texto}`;
+  div.textContent = ${remetente}: ${texto};
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 function substituirUltimaMensagem(remetente, texto) {
   const ultimo = chatBox.lastChild;
-  if (ultimo) ultimo.textContent = `${remetente}: ${texto}`;
+  if (ultimo) ultimo.textContent = ${remetente}: ${texto};
 }
 
 async function enviarMensagem() {
@@ -29,7 +29,7 @@ async function enviarMensagem() {
   appendMensagem("Jesusinho", "digitando...");
 
   try {
-    const resposta = await fetch(`${baseURL}/responder`, {
+    const resposta = await fetch(${baseURL}/responder, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto })
@@ -46,7 +46,7 @@ async function enviarMensagem() {
 async function pedirVersiculo() {
   appendMensagem("Jesusinho", "digitando...");
   try {
-    const resposta = await fetch(`${baseURL}/responder`, {
+    const resposta = await fetch(${baseURL}/responder, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto: "Me dê um versículo bíblico inspirador para hoje." })
@@ -63,7 +63,7 @@ async function pedirVersiculo() {
 async function pedirOracao() {
   appendMensagem("Jesusinho", "digitando...");
   try {
-    const resposta = await fetch(`${baseURL}/responder`, {
+    const resposta = await fetch(${baseURL}/responder, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto: "Escreva uma oração curta e edificante para o dia de hoje." })
@@ -79,7 +79,7 @@ async function pedirOracao() {
 
 async function falarTexto(texto) {
   try {
-    const res = await fetch(`${baseURL}/tts`, {
+    const res = await fetch(${baseURL}/tts, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto })
@@ -98,7 +98,7 @@ async function falarTexto(texto) {
   }
 }
 
-// Reconhecimento de voz ajustado com feedback no botão
+// Reconhecimento de voz ajustado
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition;
 
@@ -114,18 +114,6 @@ function falar() {
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
 
-    recognition.onstart = () => {
-      falarBtn.disabled = true;
-      falarBtn.textContent = "Ouvindo...";
-      falarBtn.classList.add("bg-[#00994d]");
-    };
-
-    recognition.onend = () => {
-      falarBtn.disabled = false;
-      falarBtn.textContent = "🎤 Falar";
-      falarBtn.classList.remove("bg-[#00994d]");
-    };
-
     recognition.onresult = (event) => {
       const texto = event.results[0][0].transcript;
       inputText.value = texto;
@@ -134,13 +122,11 @@ function falar() {
 
     recognition.onerror = (event) => {
       console.error("Erro no reconhecimento de voz:", event.error);
-      falarBtn.disabled = false;
-      falarBtn.textContent = "🎤 Falar";
-      falarBtn.classList.remove("bg-[#00994d]");
     };
   }
 
   recognition.start();
+}
 
 sendBtn.addEventListener("click", enviarMensagem);
 inputText.addEventListener("keydown", (e) => {
