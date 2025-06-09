@@ -141,10 +141,6 @@ function falar() {
   }
 
   recognition.start();
-}
-
-  recognition.start();
-}
 
 sendBtn.addEventListener("click", enviarMensagem);
 inputText.addEventListener("keydown", (e) => {
