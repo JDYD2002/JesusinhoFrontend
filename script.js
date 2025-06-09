@@ -7,19 +7,22 @@ const oracaoBtn = document.getElementById("oracao-btn");
 const falarBtn = document.getElementById("falar-btn");
 const audioPlayer = document.getElementById("audio-player");
 
+// Função para adicionar nova mensagem no chat
 function appendMensagem(remetente, texto) {
   const div = document.createElement("div");
   div.classList.add("mensagem");
-  div.textContent = ${remetente}: ${texto};
+  div.textContent = `${remetente}: ${texto}`;
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+// Função para substituir a última mensagem (ex: "digitando..." por resposta real)
 function substituirUltimaMensagem(remetente, texto) {
   const ultimo = chatBox.lastChild;
-  if (ultimo) ultimo.textContent = ${remetente}: ${texto};
+  if (ultimo) ultimo.textContent = `${remetente}: ${texto}`;
 }
 
+// Enviar mensagem do usuário
 async function enviarMensagem() {
   const texto = inputText.value.trim();
   if (!texto) return;
@@ -29,57 +32,60 @@ async function enviarMensagem() {
   appendMensagem("Jesusinho", "digitando...");
 
   try {
-    const resposta = await fetch(${baseURL}/responder, {
+    const resposta = await fetch(`${baseURL}/responder`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto })
     }).then(r => r.json());
 
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    // falarTexto(resposta.resposta); // desativado
+    // falarTexto(resposta.resposta); // desativado por enquanto
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao se conectar com o servidor.");
     console.error("Erro ao enviar mensagem:", err);
   }
 }
 
+// Pedir versículo do dia
 async function pedirVersiculo() {
   appendMensagem("Jesusinho", "digitando...");
   try {
-    const resposta = await fetch(${baseURL}/responder, {
+    const resposta = await fetch(`${baseURL}/responder`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto: "Me dê um versículo bíblico inspirador para hoje." })
     }).then(r => r.json());
 
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    // falarTexto(resposta.resposta); // desativado
+    // falarTexto(resposta.resposta); // desativado por enquanto
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar versículo.");
     console.error("Erro ao pedir versículo:", err);
   }
 }
 
+// Pedir oração do dia
 async function pedirOracao() {
   appendMensagem("Jesusinho", "digitando...");
   try {
-    const resposta = await fetch(${baseURL}/responder, {
+    const resposta = await fetch(`${baseURL}/responder`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto: "Escreva uma oração curta e edificante para o dia de hoje." })
     }).then(r => r.json());
 
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    // falarTexto(resposta.resposta); // desativado
+    // falarTexto(resposta.resposta); // desativado por enquanto
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar oração.");
     console.error("Erro ao pedir oração:", err);
   }
 }
 
+// Fala (TTS) — Desativado por enquanto
 async function falarTexto(texto) {
   try {
-    const res = await fetch(${baseURL}/tts, {
+    const res = await fetch(`${baseURL}/tts`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto })
@@ -98,9 +104,10 @@ async function falarTexto(texto) {
   }
 }
 
-// Reconhecimento de voz ajustado
+// Reconhecimento de voz
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition;
+let reconhecendo = false;
 
 function falar() {
   if (!SpeechRecognition) {
@@ -108,11 +115,25 @@ function falar() {
     return;
   }
 
+  if (reconhecendo) return;
+
   if (!recognition) {
     recognition = new SpeechRecognition();
     recognition.lang = "pt-BR";
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+      reconhecendo = true;
+      falarBtn.textContent = "🎙️ Ouvindo...";
+      falarBtn.disabled = true;
+    };
+
+    recognition.onend = () => {
+      reconhecendo = false;
+      falarBtn.textContent = "🎤 Falar";
+      falarBtn.disabled = false;
+    };
 
     recognition.onresult = (event) => {
       const texto = event.results[0][0].transcript;
@@ -122,12 +143,16 @@ function falar() {
 
     recognition.onerror = (event) => {
       console.error("Erro no reconhecimento de voz:", event.error);
+      appendMensagem("Jesusinho", "Não consegui ouvir corretamente. Tente novamente.");
+      falarBtn.textContent = "🎤 Falar";
+      falarBtn.disabled = false;
     };
   }
 
   recognition.start();
 }
 
+// Eventos dos botões e enter
 sendBtn.addEventListener("click", enviarMensagem);
 inputText.addEventListener("keydown", (e) => {
   if (e.key === "Enter") enviarMensagem();
