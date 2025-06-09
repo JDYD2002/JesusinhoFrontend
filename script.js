@@ -98,19 +98,15 @@ async function falarTexto(texto) {
   }
 }
 
-// Reconhecimento de voz ajustado
-// Reconhecimento de voz melhorado
+// Reconhecimento de voz ajustado com feedback no botão
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition;
-let reconhecendo = false;
 
 function falar() {
   if (!SpeechRecognition) {
     alert("Reconhecimento de voz não suportado no seu navegador.");
     return;
   }
-
-  if (reconhecendo) return;
 
   if (!recognition) {
     recognition = new SpeechRecognition();
@@ -119,15 +115,15 @@ function falar() {
     recognition.maxAlternatives = 1;
 
     recognition.onstart = () => {
-      reconhecendo = true;
-      falarBtn.textContent = "🎙️ Ouvindo...";
       falarBtn.disabled = true;
+      falarBtn.textContent = "Ouvindo...";
+      falarBtn.classList.add("bg-[#00994d]");
     };
 
     recognition.onend = () => {
-      reconhecendo = false;
-      falarBtn.textContent = "🎤 Falar";
       falarBtn.disabled = false;
+      falarBtn.textContent = "🎤 Falar";
+      falarBtn.classList.remove("bg-[#00994d]");
     };
 
     recognition.onresult = (event) => {
@@ -138,9 +134,14 @@ function falar() {
 
     recognition.onerror = (event) => {
       console.error("Erro no reconhecimento de voz:", event.error);
-      appendMensagem("Jesusinho", "Não consegui ouvir corretamente. Tente novamente.");
+      falarBtn.disabled = false;
+      falarBtn.textContent = "🎤 Falar";
+      falarBtn.classList.remove("bg-[#00994d]");
     };
   }
+
+  recognition.start();
+}
 
   recognition.start();
 }
