@@ -14,21 +14,23 @@ function appendMensagem(remetente, texto) {
   div.classList.add("mensagem");
   if (remetente === "Você") div.classList.add("voce");
   else div.classList.add("jesusinho");
-  div.textContent = `${remetente}: ${texto}`;
+  div.textContent = ${remetente}: ${texto};
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 function substituirUltimaMensagem(remetente, texto) {
-  const ultimo = chatBox.lastElementChild;
+  const ultimo = chatBox.lastElementChild; // melhor usar lastElementChild
   if (ultimo) {
     ultimo.classList.remove("voce", "jesusinho");
     if (remetente === "Você") ultimo.classList.add("voce");
     else ultimo.classList.add("jesusinho");
-    ultimo.textContent = `${remetente}: ${texto}`;
+    ultimo.textContent = ${remetente}: ${texto};
   } else {
+    // Se não existir mensagem, adiciona nova
     appendMensagem(remetente, texto);
   }
+
 }
 
 async function enviarMensagem() {
@@ -42,7 +44,7 @@ async function enviarMensagem() {
   esperandoResposta = true;
 
   try {
-    const resposta = await fetch(`${baseURL}/chat`, {
+    const resposta = await fetch(${baseURL}/chat, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto })
@@ -64,7 +66,7 @@ async function pedirVersiculo() {
   esperandoResposta = true;
 
   try {
-    const resposta = await fetch(`${baseURL}/chat`, {
+    const resposta = await fetch(${baseURL}/chat, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto: "Me dê um versículo bíblico inspirador para hoje." })
@@ -86,7 +88,7 @@ async function pedirOracao() {
   esperandoResposta = true;
 
   try {
-    const resposta = await fetch(`${baseURL}/chat`, {
+    const resposta = await fetch(${baseURL}/chat, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto: "Escreva uma oração curta e edificante para o dia de hoje." })
@@ -104,7 +106,7 @@ async function pedirOracao() {
 
 async function falarTexto(texto) {
   try {
-    const res = await fetch(`${baseURL}/tts`, {
+    const res = await fetch(${baseURL}/tts, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto })
@@ -123,7 +125,7 @@ async function falarTexto(texto) {
   }
 }
 
-// Reconhecimento de voz
+// Reconhecimento de voz ajustado com feedback no botão
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition;
 
@@ -159,7 +161,6 @@ function falar() {
 
     recognition.onerror = (event) => {
       console.error("Erro no reconhecimento de voz:", event.error);
-      alert("⚠️ Erro no reconhecimento de voz: " + event.error);
       falarBtn.disabled = false;
       falarBtn.textContent = "🎤 Falar";
       falarBtn.classList.remove("bg-[#00994d]");
@@ -169,31 +170,13 @@ function falar() {
   recognition.start();
 }
 
-// Verifica permissão antes de gravar
-falarBtn.addEventListener("click", () => {
-  if (!SpeechRecognition) {
-    alert("Reconhecimento de voz não suportado no seu navegador.");
-    return;
-  }
-
-  navigator.permissions.query({ name: "microphone" }).then(result => {
-    if (result.state === "denied") {
-      alert("⚠️ O acesso ao microfone está bloqueado.\nClique no cadeado 🔒 na barra de endereço e permita o uso do microfone.");
-    } else {
-      falar();
-    }
-  }).catch(() => {
-    // Caso não consiga verificar a permissão, tenta gravar mesmo assim
-    falar();
-  });
-});
-
 sendBtn.addEventListener("click", enviarMensagem);
 inputText.addEventListener("keydown", (e) => {
   if (e.key === "Enter") enviarMensagem();
 });
 versiculoBtn.addEventListener("click", pedirVersiculo);
 oracaoBtn.addEventListener("click", pedirOracao);
+falarBtn.addEventListener("click", falar);
 
 // Mensagem de boas-vindas ao carregar a página
 window.addEventListener("load", () => {
