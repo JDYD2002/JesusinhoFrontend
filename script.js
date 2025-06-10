@@ -147,12 +147,13 @@ function falar() {
       reconhecendo = false;
     };
 
-    recognition.onend = () => {
-      reconhecendo = false;
-      falarBtn.textContent = "🎤 Falar";
-      falarBtn.disabled = false;
-    };
-  }
+ recognition.onerror = (event) => {
+  console.error("Erro no reconhecimento de voz:", event.error);
+  alert("Erro no reconhecimento de voz: " + event.error);
+  falarBtn.disabled = false;
+  falarBtn.textContent = "🎤 Falar";
+  falarBtn.classList.remove("bg-[#00994d]");
+};
 
   recognition.start();
 }
