@@ -12,29 +12,28 @@ let esperandoResposta = false;
 function appendMensagem(remetente, texto) {
   const div = document.createElement("div");
   div.classList.add("mensagem");
-  if (remetente === "Você") div.classList.add("voce");
+  if(remetente === "Você") div.classList.add("voce");
   else div.classList.add("jesusinho");
-  div.textContent = ${remetente}: ${texto};
+  div.textContent = `${remetente}: ${texto}`;
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 function substituirUltimaMensagem(remetente, texto) {
-  const ultimo = chatBox.lastElementChild; // melhor usar lastElementChild
+  const ultimo = chatBox.lastElementChild;
   if (ultimo) {
     ultimo.classList.remove("voce", "jesusinho");
-    if (remetente === "Você") ultimo.classList.add("voce");
+    if(remetente === "Você") ultimo.classList.add("voce");
     else ultimo.classList.add("jesusinho");
-    ultimo.textContent = ${remetente}: ${texto};
+    ultimo.textContent = `${remetente}: ${texto}`;
   } else {
-    // Se não existir mensagem, adiciona nova
     appendMensagem(remetente, texto);
   }
-
 }
 
-async function enviarMensagem() {
-  if (esperandoResposta) return;
+// Recebe opcionalmente o event e ignora para evitar problemas
+async function enviarMensagem(_event) {
+  if(esperandoResposta) return;
   const texto = inputText.value.trim();
   if (!texto) return;
 
@@ -44,14 +43,13 @@ async function enviarMensagem() {
   esperandoResposta = true;
 
   try {
-    const resposta = await fetch(${baseURL}/chat, {
+    const resposta = await fetch(`${baseURL}/responder`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto })
-    }).then(r => r.json());
-
-    substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    falarTexto(resposta.resposta);
+    });
+    const data = await resposta.json();
+    substituirUltimaMensagem("Jesusinho", data.resposta);
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao se conectar com o servidor.");
     console.error("Erro ao enviar mensagem:", err);
@@ -61,19 +59,18 @@ async function enviarMensagem() {
 }
 
 async function pedirVersiculo() {
-  if (esperandoResposta) return;
+  if(esperandoResposta) return;
   appendMensagem("Jesusinho", "digitando...");
   esperandoResposta = true;
 
   try {
-    const resposta = await fetch(${baseURL}/chat, {
+    const resposta = await fetch(`${baseURL}/responder`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto: "Me dê um versículo bíblico inspirador para hoje." })
-    }).then(r => r.json());
-
-    substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    falarTexto(resposta.resposta);
+    });
+    const data = await resposta.json();
+    substituirUltimaMensagem("Jesusinho", data.resposta);
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar versículo.");
     console.error("Erro ao pedir versículo:", err);
@@ -83,19 +80,18 @@ async function pedirVersiculo() {
 }
 
 async function pedirOracao() {
-  if (esperandoResposta) return;
+  if(esperandoResposta) return;
   appendMensagem("Jesusinho", "digitando...");
   esperandoResposta = true;
 
   try {
-    const resposta = await fetch(${baseURL}/chat, {
+    const resposta = await fetch(`${baseURL}/responder`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ texto: "Escreva uma oração curta e edificante para o dia de hoje." })
-    }).then(r => r.json());
-
-    substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    falarTexto(resposta.resposta);
+    });
+    const data = await resposta.json();
+    substituirUltimaMensagem("Jesusinho", data.resposta);
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar oração.");
     console.error("Erro ao pedir oração:", err);
@@ -104,53 +100,33 @@ async function pedirOracao() {
   }
 }
 
-async function falarTexto(texto) {
-  try {
-    const res = await fetch(${baseURL}/tts, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ texto })
-    });
-
-    const data = await res.json();
-    if (data.audio_b64) {
-      audioPlayer.src = "data:audio/mp3;base64," + data.audio_b64;
-      audioPlayer.style.display = "block";
-      audioPlayer.play();
-    } else {
-      audioPlayer.style.display = "none";
-    }
-  } catch (err) {
-    console.error("Erro ao converter texto em fala:", err);
-  }
-}
-
-// Reconhecimento de voz ajustado com feedback no botão
+// Reconhecimento de voz
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-let recognition;
+let recognition = null;
+let reconhecendo = false;
 
 function falar() {
-  if (!SpeechRecognition) {
+  if(!SpeechRecognition) {
     alert("Reconhecimento de voz não suportado no seu navegador.");
     return;
   }
 
-  if (!recognition) {
+  if(reconhecendo) {
+    appendMensagem("Jesusinho", "Já estou ouvindo sua voz, por favor fale.");
+    return;
+  }
+
+  if(!recognition) {
     recognition = new SpeechRecognition();
     recognition.lang = "pt-BR";
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
 
     recognition.onstart = () => {
+      reconhecendo = true;
+      falarBtn.textContent = "🎙️ Ouvindo...";
       falarBtn.disabled = true;
-      falarBtn.textContent = "Gravando...";
-      falarBtn.classList.add("bg-[#00994d]");
-    };
-
-    recognition.onend = () => {
-      falarBtn.disabled = false;
-      falarBtn.textContent = "🎤 Falar";
-      falarBtn.classList.remove("bg-[#00994d]");
+      appendMensagem("Jesusinho", "Estou ouvindo você, fale agora.");
     };
 
     recognition.onresult = (event) => {
@@ -160,25 +136,39 @@ function falar() {
     };
 
     recognition.onerror = (event) => {
-      console.error("Erro no reconhecimento de voz:", event.error);
-      falarBtn.disabled = false;
+      if(event.error === 'not-allowed' || event.error === 'permission-denied') {
+        appendMensagem("Jesusinho", "Permissão para usar o microfone negada. Por favor, permita o acesso e tente novamente.");
+      } else if(event.error === 'no-speech') {
+        appendMensagem("Jesusinho", "Não ouvi nada. Por favor, tente falar novamente.");
+      } else {
+        appendMensagem("Jesusinho", `Erro no reconhecimento de voz: ${event.error}`);
+      }
       falarBtn.textContent = "🎤 Falar";
-      falarBtn.classList.remove("bg-[#00994d]");
+      falarBtn.disabled = false;
+      reconhecendo = false;
+    };
+
+    recognition.onend = () => {
+      reconhecendo = false;
+      falarBtn.textContent = "🎤 Falar";
+      falarBtn.disabled = false;
     };
   }
 
   recognition.start();
 }
 
+// Eventos dos botões e campo de texto
 sendBtn.addEventListener("click", enviarMensagem);
 inputText.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") enviarMensagem();
+  if(e.key === "Enter") {
+    e.preventDefault();
+    enviarMensagem();
+  }
 });
 versiculoBtn.addEventListener("click", pedirVersiculo);
 oracaoBtn.addEventListener("click", pedirOracao);
 falarBtn.addEventListener("click", falar);
 
-// Mensagem de boas-vindas ao carregar a página
-window.addEventListener("load", () => {
-  appendMensagem("Jesusinho", "Olá! Sou o Jesusinho Virtual. Como posso ajudar você hoje?");
-});
+// Mensagem inicial
+appendMensagem("Jesusinho", "Olá! Eu sou Jesusinho, seu assistente espiritual. Como posso ajudar você hoje? 🙏");
