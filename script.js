@@ -7,7 +7,6 @@ const oracaoBtn = document.getElementById("oracao-btn");
 const falarBtn = document.getElementById("falar-btn");
 const audioPlayer = document.getElementById("audio-player");
 
-// Função para adicionar nova mensagem no chat
 function appendMensagem(remetente, texto) {
   const div = document.createElement("div");
   div.classList.add("mensagem");
@@ -16,13 +15,11 @@ function appendMensagem(remetente, texto) {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// Função para substituir a última mensagem (ex: "digitando..." por resposta real)
 function substituirUltimaMensagem(remetente, texto) {
   const ultimo = chatBox.lastChild;
   if (ultimo) ultimo.textContent = `${remetente}: ${texto}`;
 }
 
-// Enviar mensagem do usuário
 async function enviarMensagem() {
   const texto = inputText.value.trim();
   if (!texto) return;
@@ -39,14 +36,13 @@ async function enviarMensagem() {
     }).then(r => r.json());
 
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    // falarTexto(resposta.resposta); // desativado por enquanto
+    // falarTexto(resposta.resposta); // desativado
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao se conectar com o servidor.");
     console.error("Erro ao enviar mensagem:", err);
   }
 }
 
-// Pedir versículo do dia
 async function pedirVersiculo() {
   appendMensagem("Jesusinho", "digitando...");
   try {
@@ -57,14 +53,13 @@ async function pedirVersiculo() {
     }).then(r => r.json());
 
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    // falarTexto(resposta.resposta); // desativado por enquanto
+    // falarTexto(resposta.resposta); // desativado
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar versículo.");
     console.error("Erro ao pedir versículo:", err);
   }
 }
 
-// Pedir oração do dia
 async function pedirOracao() {
   appendMensagem("Jesusinho", "digitando...");
   try {
@@ -75,14 +70,13 @@ async function pedirOracao() {
     }).then(r => r.json());
 
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    // falarTexto(resposta.resposta); // desativado por enquanto
+    // falarTexto(resposta.resposta); // desativado
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar oração.");
     console.error("Erro ao pedir oração:", err);
   }
 }
 
-// Fala (TTS) — Desativado por enquanto
 async function falarTexto(texto) {
   try {
     const res = await fetch(`${baseURL}/tts`, {
@@ -104,9 +98,9 @@ async function falarTexto(texto) {
   }
 }
 
-// Reconhecimento de voz
+// Reconhecimento de voz atualizado com logs e mensagens amigáveis
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-let recognition;
+let recognition = null;
 let reconhecendo = false;
 
 function falar() {
@@ -115,7 +109,10 @@ function falar() {
     return;
   }
 
-  if (reconhecendo) return;
+  if (reconhecendo) {
+    appendMensagem("Jesusinho", "Já estou ouvindo sua voz, por favor fale.");
+    return;
+  }
 
   if (!recognition) {
     recognition = new SpeechRecognition();
@@ -127,32 +124,42 @@ function falar() {
       reconhecendo = true;
       falarBtn.textContent = "🎙️ Ouvindo...";
       falarBtn.disabled = true;
-    };
-
-    recognition.onend = () => {
-      reconhecendo = false;
-      falarBtn.textContent = "🎤 Falar";
-      falarBtn.disabled = false;
+      console.log("Reconhecimento de voz iniciado.");
+      appendMensagem("Jesusinho", "Estou ouvindo você, fale agora.");
     };
 
     recognition.onresult = (event) => {
       const texto = event.results[0][0].transcript;
+      console.log("Texto reconhecido:", texto);
       inputText.value = texto;
       enviarMensagem();
     };
 
     recognition.onerror = (event) => {
       console.error("Erro no reconhecimento de voz:", event.error);
-      appendMensagem("Jesusinho", "Não consegui ouvir corretamente. Tente novamente.");
+      if(event.error === 'not-allowed' || event.error === 'permission-denied') {
+        appendMensagem("Jesusinho", "Permissão para usar o microfone negada. Por favor, permita o acesso e tente novamente.");
+      } else if(event.error === 'no-speech') {
+        appendMensagem("Jesusinho", "Não ouvi nada. Por favor, tente falar novamente.");
+      } else {
+        appendMensagem("Jesusinho", `Erro no reconhecimento de voz: ${event.error}`);
+      }
       falarBtn.textContent = "🎤 Falar";
       falarBtn.disabled = false;
+      reconhecendo = false;
+    };
+
+    recognition.onend = () => {
+      reconhecendo = false;
+      falarBtn.textContent = "🎤 Falar";
+      falarBtn.disabled = false;
+      console.log("Reconhecimento de voz finalizado.");
     };
   }
 
   recognition.start();
 }
 
-// Eventos dos botões e enter
 sendBtn.addEventListener("click", enviarMensagem);
 inputText.addEventListener("keydown", (e) => {
   if (e.key === "Enter") enviarMensagem();
