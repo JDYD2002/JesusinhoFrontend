@@ -154,6 +154,7 @@ function falar() {
   falarBtn.textContent = "🎤 Falar";
   falarBtn.classList.remove("bg-[#00994d]");
 };
+  }
 
   recognition.start();
 }
