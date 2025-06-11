@@ -20,17 +20,15 @@ function appendMensagem(remetente, texto) {
 }
 
 function substituirUltimaMensagem(remetente, texto) {
-  const ultimo = chatBox.lastElementChild; // melhor usar lastElementChild
+  const ultimo = chatBox.lastElementChild;
   if (ultimo) {
     ultimo.classList.remove("voce", "jesusinho");
     if (remetente === "Você") ultimo.classList.add("voce");
     else ultimo.classList.add("jesusinho");
     ultimo.textContent = `${remetente}: ${texto}`;
   } else {
-    // Se não existir mensagem, adiciona nova
     appendMensagem(remetente, texto);
   }
-
 }
 
 async function enviarMensagem() {
@@ -50,8 +48,10 @@ async function enviarMensagem() {
       body: JSON.stringify({ texto })
     }).then(r => r.json());
 
-    substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    falarTexto(resposta.resposta);
+    console.log("Resposta do backend (enviarMensagem):", resposta);
+    const textoResposta = resposta.resposta || "Desculpe, não entendi.";
+    substituirUltimaMensagem("Jesusinho", textoResposta);
+    falarTexto(textoResposta);
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao se conectar com o servidor.");
     console.error("Erro ao enviar mensagem:", err);
@@ -72,8 +72,10 @@ async function pedirVersiculo() {
       body: JSON.stringify({ texto: "Me dê um versículo bíblico inspirador para hoje." })
     }).then(r => r.json());
 
-    substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    falarTexto(resposta.resposta);
+    console.log("Resposta do backend (pedirVersiculo):", resposta);
+    const textoResposta = resposta.resposta || "Não consegui buscar o versículo agora.";
+    substituirUltimaMensagem("Jesusinho", textoResposta);
+    falarTexto(textoResposta);
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar versículo.");
     console.error("Erro ao pedir versículo:", err);
@@ -94,8 +96,10 @@ async function pedirOracao() {
       body: JSON.stringify({ texto: "Escreva uma oração curta e edificante para o dia de hoje." })
     }).then(r => r.json());
 
-    substituirUltimaMensagem("Jesusinho", resposta.resposta);
-    falarTexto(resposta.resposta);
+    console.log("Resposta do backend (pedirOracao):", resposta);
+    const textoResposta = resposta.resposta || "Não consegui buscar a oração agora.";
+    substituirUltimaMensagem("Jesusinho", textoResposta);
+    falarTexto(textoResposta);
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar oração.");
     console.error("Erro ao pedir oração:", err);
@@ -113,6 +117,7 @@ async function falarTexto(texto) {
     });
 
     const data = await res.json();
+    console.log("Resposta do backend (tts):", data);
     if (data.audio_b64) {
       audioPlayer.src = "data:audio/mp3;base64," + data.audio_b64;
       audioPlayer.style.display = "block";
@@ -125,7 +130,6 @@ async function falarTexto(texto) {
   }
 }
 
-// Reconhecimento de voz ajustado com feedback no botão
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition;
 
@@ -178,7 +182,6 @@ versiculoBtn.addEventListener("click", pedirVersiculo);
 oracaoBtn.addEventListener("click", pedirOracao);
 falarBtn.addEventListener("click", falar);
 
-// Mensagem de boas-vindas ao carregar a página
 window.addEventListener("load", () => {
   appendMensagem("Jesusinho", "Olá! Sou o Jesusinho Virtual. Como posso ajudar você hoje?");
 });
