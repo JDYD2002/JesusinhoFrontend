@@ -48,10 +48,8 @@ async function enviarMensagem() {
       body: JSON.stringify({ texto })
     }).then(r => r.json());
 
-    console.log("Resposta do backend (enviarMensagem):", resposta);
-    const textoResposta = resposta.resposta || "Desculpe, não entendi.";
-    substituirUltimaMensagem("Jesusinho", textoResposta);
-    falarTexto(textoResposta);
+    substituirUltimaMensagem("Jesusinho", resposta.resposta);
+    falarTexto(resposta.resposta);
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao se conectar com o servidor.");
     console.error("Erro ao enviar mensagem:", err);
@@ -72,10 +70,8 @@ async function pedirVersiculo() {
       body: JSON.stringify({ texto: "Me dê um versículo bíblico inspirador para hoje." })
     }).then(r => r.json());
 
-    console.log("Resposta do backend (pedirVersiculo):", resposta);
-    const textoResposta = resposta.resposta || "Não consegui buscar o versículo agora.";
-    substituirUltimaMensagem("Jesusinho", textoResposta);
-    falarTexto(textoResposta);
+    substituirUltimaMensagem("Jesusinho", resposta.resposta);
+    falarTexto(resposta.resposta);
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar versículo.");
     console.error("Erro ao pedir versículo:", err);
@@ -96,10 +92,8 @@ async function pedirOracao() {
       body: JSON.stringify({ texto: "Escreva uma oração curta e edificante para o dia de hoje." })
     }).then(r => r.json());
 
-    console.log("Resposta do backend (pedirOracao):", resposta);
-    const textoResposta = resposta.resposta || "Não consegui buscar a oração agora.";
-    substituirUltimaMensagem("Jesusinho", textoResposta);
-    falarTexto(textoResposta);
+    substituirUltimaMensagem("Jesusinho", resposta.resposta);
+    falarTexto(resposta.resposta);
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar oração.");
     console.error("Erro ao pedir oração:", err);
@@ -117,7 +111,6 @@ async function falarTexto(texto) {
     });
 
     const data = await res.json();
-    console.log("Resposta do backend (tts):", data);
     if (data.audio_b64) {
       audioPlayer.src = "data:audio/mp3;base64," + data.audio_b64;
       audioPlayer.style.display = "block";
@@ -130,6 +123,7 @@ async function falarTexto(texto) {
   }
 }
 
+// Reconhecimento de voz
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition;
 
@@ -165,6 +159,7 @@ function falar() {
 
     recognition.onerror = (event) => {
       console.error("Erro no reconhecimento de voz:", event.error);
+      alert("⚠️ Erro no reconhecimento de voz: " + event.error);
       falarBtn.disabled = false;
       falarBtn.textContent = "🎤 Falar";
       falarBtn.classList.remove("bg-[#00994d]");
@@ -174,14 +169,33 @@ function falar() {
   recognition.start();
 }
 
+// Verifica permissão antes de gravar
+falarBtn.addEventListener("click", () => {
+  if (!SpeechRecognition) {
+    alert("Reconhecimento de voz não suportado no seu navegador.");
+    return;
+  }
+
+  navigator.permissions.query({ name: "microphone" }).then(result => {
+    if (result.state === "denied") {
+      alert("⚠️ O acesso ao microfone está bloqueado.\nClique no cadeado 🔒 na barra de endereço e permita o uso do microfone.");
+    } else {
+      falar();
+    }
+  }).catch(() => {
+    // Caso não consiga verificar a permissão, tenta gravar mesmo assim
+    falar();
+  });
+});
+
 sendBtn.addEventListener("click", enviarMensagem);
 inputText.addEventListener("keydown", (e) => {
   if (e.key === "Enter") enviarMensagem();
 });
 versiculoBtn.addEventListener("click", pedirVersiculo);
 oracaoBtn.addEventListener("click", pedirOracao);
-falarBtn.addEventListener("click", falar);
 
+// Mensagem de boas-vindas ao carregar a página
 window.addEventListener("load", () => {
   appendMensagem("Jesusinho", "Olá! Sou o Jesusinho Virtual. Como posso ajudar você hoje?");
 });
