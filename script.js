@@ -1,9 +1,4 @@
-const servidores = [
-  "https://jesus-mb25.onrender.com",           // Principal (Render)
-  "https://1232-2804-d4b-a02e-3400-4d61-1040-bb9e-30e9.ngrok-free.app",     // Ngrok local (edite aqui)
-  "https://outro-servidor.com"                 // Outro opcional
-];
-
+const baseURL = "https://jesus-mb25.onrender.com";
 const chatBox = document.getElementById("chat-box");
 const inputText = document.getElementById("input-text");
 const sendBtn = document.getElementById("send-btn");
@@ -13,23 +8,6 @@ const falarBtn = document.getElementById("falar-btn");
 const audioPlayer = document.getElementById("audio-player");
 
 let esperandoResposta = false;
-
-// Tenta enviar para os servidores em ordem
-async function enviarParaServidor(endpoint, payload) {
-  for (const baseURL of servidores) {
-    try {
-      const resp = await fetch(`${baseURL}/${endpoint}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      if (resp.ok) return await resp.json();
-    } catch (err) {
-      console.warn(`Erro com ${baseURL}:`, err.message);
-    }
-  }
-  return { resposta: "Todos os servidores estão offline 😢🙏" };
-}
 
 function appendMensagem(remetente, texto) {
   const div = document.createElement("div");
@@ -42,15 +20,17 @@ function appendMensagem(remetente, texto) {
 }
 
 function substituirUltimaMensagem(remetente, texto) {
-  const ultimo = chatBox.lastElementChild;
+  const ultimo = chatBox.lastElementChild; // melhor usar lastElementChild
   if (ultimo) {
     ultimo.classList.remove("voce", "jesusinho");
     if (remetente === "Você") ultimo.classList.add("voce");
     else ultimo.classList.add("jesusinho");
     ultimo.textContent = `${remetente}: ${texto}`;
   } else {
+    // Se não existir mensagem, adiciona nova
     appendMensagem(remetente, texto);
   }
+
 }
 
 async function enviarMensagem() {
@@ -64,7 +44,12 @@ async function enviarMensagem() {
   esperandoResposta = true;
 
   try {
-    const resposta = await enviarParaServidor("chat", { texto });
+    const resposta = await fetch(`${baseURL}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ texto })
+    }).then(r => r.json());
+
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
     falarTexto(resposta.resposta);
   } catch (err) {
@@ -81,9 +66,12 @@ async function pedirVersiculo() {
   esperandoResposta = true;
 
   try {
-    const resposta = await enviarParaServidor("chat", {
-      texto: "Me dê um versículo bíblico inspirador para hoje."
-    });
+    const resposta = await fetch(`${baseURL}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ texto: "Me dê um versículo bíblico inspirador para hoje." })
+    }).then(r => r.json());
+
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
     falarTexto(resposta.resposta);
   } catch (err) {
@@ -100,9 +88,12 @@ async function pedirOracao() {
   esperandoResposta = true;
 
   try {
-    const resposta = await enviarParaServidor("chat", {
-      texto: "Escreva uma oração curta e edificante para o dia de hoje."
-    });
+    const resposta = await fetch(`${baseURL}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ texto: "Escreva uma oração curta e edificante para o dia de hoje." })
+    }).then(r => r.json());
+
     substituirUltimaMensagem("Jesusinho", resposta.resposta);
     falarTexto(resposta.resposta);
   } catch (err) {
@@ -115,7 +106,13 @@ async function pedirOracao() {
 
 async function falarTexto(texto) {
   try {
-    const data = await enviarParaServidor("tts", { texto });
+    const res = await fetch(`${baseURL}/tts`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ texto })
+    });
+
+    const data = await res.json();
     if (data.audio_b64) {
       audioPlayer.src = "data:audio/mp3;base64," + data.audio_b64;
       audioPlayer.style.display = "block";
@@ -128,7 +125,7 @@ async function falarTexto(texto) {
   }
 }
 
-// Reconhecimento de voz com feedback visual
+// Reconhecimento de voz ajustado com feedback no botão
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition;
 
@@ -181,7 +178,7 @@ versiculoBtn.addEventListener("click", pedirVersiculo);
 oracaoBtn.addEventListener("click", pedirOracao);
 falarBtn.addEventListener("click", falar);
 
-// Mensagem inicial
+// Mensagem de boas-vindas ao carregar a página
 window.addEventListener("load", () => {
   appendMensagem("Jesusinho", "Olá! Sou o Jesusinho Virtual. Como posso ajudar você hoje?");
 });
