@@ -7,6 +7,9 @@ const oracaoBtn = document.getElementById("oracao-btn");
 const falarBtn = document.getElementById("falar-btn");
 const audioPlayer = document.getElementById("audio-player");
 
+// Pegando a imagem do Jesusinho para trocar o gif
+const gifImg = document.getElementById("jesusinho-img");
+
 let esperandoResposta = false;
 
 function appendMensagem(remetente, texto) {
@@ -31,6 +34,38 @@ function substituirUltimaMensagem(remetente, texto) {
   }
 }
 
+// Função para detectar emoção na resposta e retornar o gif apropriado
+function detectarEmocao(texto) {
+  const txt = texto.toLowerCase();
+
+  if (txt.match(/alegria|feliz|contente|ótimo|maravilha|glória|vitória|obrigado|gratidão|louvor|aleluia|bênção|sorriso/))
+    return "jesusinho_feliz.gif";
+
+  if (txt.match(/triste|dor|sofrimento|chorar|lágrimas|angustia|desânimo|preocupado|cansado|abatido|dor no coração/))
+    return "jesusinho_triste.gif";
+
+  if (txt.match(/oração|orar|orando|suplicar|interceder|clamar|pedindo|abençoar|louvar a deus/))
+    return "jesusinho_orando.gif";
+
+  if (txt.match(/bíblia|versículo|leitura|estudo|palavra|mensagem|salmo|provérbios|evangelho|ensinamento|meditar/))
+    return "jesusinho_lendo.gif";
+
+  if (txt.match(/aprender|ensinar|explicar|conhecimento|sabedoria|verdade|conselho|guiar|instruir/))
+    return "jesusinho_ensinando.gif";
+
+  if (txt.match(/surpresa|incrível|uau|impressionante|maravilha|choque|inesperado/))
+    return "jesusinho_surpreso.gif";
+
+  if (txt.match(/calma|paciência|tranquilo|confortar|esperança|paz|descansar|seguro|amor|fé/))
+    return "jesusinho_calmo.gif";
+
+  if (txt.match(/brincadeira|piada|risada|divertido|engraçado|sorrindo|zoar|humor|riso/))
+    return "jesusinho_brincalhao.gif";
+
+  return "jesusinho.gif";
+}
+
+
 // Recebe opcionalmente o event e ignora para evitar problemas
 async function enviarMensagem(_event) {
   if(esperandoResposta) return;
@@ -50,9 +85,11 @@ async function enviarMensagem(_event) {
     });
     const data = await resposta.json();
     substituirUltimaMensagem("Jesusinho", data.resposta);
+    gifImg.src = detectarEmocao(data.resposta); // troca o gif conforme a resposta
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao se conectar com o servidor.");
     console.error("Erro ao enviar mensagem:", err);
+    gifImg.src = "jesusinho.gif"; // volta ao gif padrão em caso de erro
   } finally {
     esperandoResposta = false;
   }
@@ -71,9 +108,11 @@ async function pedirVersiculo() {
     });
     const data = await resposta.json();
     substituirUltimaMensagem("Jesusinho", data.resposta);
+    gifImg.src = "jesusinho_lendo.gif"; // gif lendo Bíblia
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar versículo.");
     console.error("Erro ao pedir versículo:", err);
+    gifImg.src = "jesusinho.gif";
   } finally {
     esperandoResposta = false;
   }
@@ -92,9 +131,11 @@ async function pedirOracao() {
     });
     const data = await resposta.json();
     substituirUltimaMensagem("Jesusinho", data.resposta);
+    gifImg.src = "jesusinho_orando.gif"; // gif orando
   } catch (err) {
     substituirUltimaMensagem("Jesusinho", "Erro ao buscar oração.");
     console.error("Erro ao pedir oração:", err);
+    gifImg.src = "jesusinho.gif";
   } finally {
     esperandoResposta = false;
   }
