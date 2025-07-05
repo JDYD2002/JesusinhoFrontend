@@ -1,15 +1,43 @@
-💻 Descrição do Frontend – Jesusinho Virtual
-O frontend do Jesusinho Virtual foi desenvolvido com HTML, CSS e JavaScript puro, de forma leve e responsiva. A interface permite a interação do usuário com o assistente virtual, enviando perguntas e recebendo respostas da IA de forma dinâmica.
+🎨 Frontend – Jesusinho Virtual (JavaScript, HTML, CSS)
+O frontend do Jesusinho Virtual foi desenvolvido com JavaScript puro, HTML e CSS, com o objetivo de criar uma interface simples, leve e intuitiva para interação com o assistente virtual.
 
-O visual é composto por:
+A aplicação permite que o usuário:
 
-Avatar animado do Jesusinho, que muda de expressão conforme o tipo de resposta gerada.
+Envie mensagens e perguntas para o assistente;
 
-Campo de mensagem para envio de perguntas.
+Visualize as respostas de forma dinâmica;
 
-Área de exibição das respostas (versículos, orações ou mensagens).
+Veja o avatar do Jesusinho mudar de expressão conforme o tipo de resposta recebida (alegre, pensativo, triste etc.).
 
-Integração com voz (TTS) para respostas faladas (quando ativada).
+O JavaScript é responsável por:
 
-O design busca ser minimalista, intuitivo e acolhedor, com foco na simplicidade e na experiência do usuário. A comunicação entre frontend e backend acontece via API RESTful, permitindo respostas geradas por IA hospedada externamente.
+Capturar e enviar as mensagens para o backend via API RESTful;
 
+Renderizar as respostas na tela em tempo real;
+
+Atualizar dinamicamente a imagem do Jesusinho com base no conteúdo da resposta;
+
+Integrar com áudio (TTS), quando ativado.
+
+O visual foi pensado para ser acolhedor e responsivo, mantendo uma experiência amigável tanto em desktop quanto em dispositivos móveis.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+PS: As imagens utilizadas no projeto Jesusinho Virtual foram criadas e/ou adaptadas exclusivamente para fins pessoais, educacionais e sem fins lucrativos.
+
+Algumas ilustrações foram retiradas e adaptadas de artes originais da artista Wan Trisna, disponíveis no site Freepik (www.freepik.com). Todos os direitos sobre essas imagens pertencem aos respectivos autores.
+
+Caso algum conteúdo precise ser ajustado ou creditado de forma diferente, por favor, entre em contato para que possamos corrigir ou remover imediatamente.
