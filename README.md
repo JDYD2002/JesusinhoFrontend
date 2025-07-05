@@ -20,3 +20,20 @@ Atualizar dinamicamente a imagem do Jesusinho com base no conteúdo da resposta;
 Integrar com áudio (TTS), quando ativado.
 
 O visual foi pensado para ser acolhedor e responsivo, mantendo uma experiência amigável tanto em desktop quanto em dispositivos móveis.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+PS: As imagens utilizadas no projeto Jesusinho Virtual foram criadas e/ou adaptadas exclusivamente para fins pessoais, educacionais e sem fins lucrativos.
+
+Algumas ilustrações foram retiradas e adaptadas de artes originais da artista Wan Trisna, disponíveis no site Freepik (www.freepik.com). Todos os direitos sobre essas imagens pertencem aos respectivos autores.
+
+Caso algum conteúdo precise ser ajustado ou creditado de forma diferente, por favor, entre em contato para que possamos corrigir ou remover imediatamente.
